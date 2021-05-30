@@ -19,9 +19,11 @@ CALL PairedTTest('UserNum', 'normal', 'Pretest', 'normal', 'Midtest', @t, @p);
 SELECT @t, @p;
 ```
 
+
+
 ## Wilcoxon Signed Rank Test
 
-##### Call procedure format: 
+- Call procedure format: 
 
 ````mysql
 CALL Wilcoxon({PrimaryKey_ID}, {Table1}, {Table2}, {Tabel1_Column}, {Tabel2_Column});
@@ -29,9 +31,25 @@ CALL Wilcoxon({PrimaryKey_ID}, {Table1}, {Table2}, {Tabel1_Column}, {Tabel2_Colu
 
 > The primary key must be the same in Table1 and Table2 for the two tables to join. 
 
-Sample code:
+- Sample code:
 
 ````mysql
 CALL Wilcoxon('UserNum', 'conditionA', 'conditionC', 'Enjoyment', 'Enjoyment');
 ````
+
+
+
+## Friedman's ANOVA
+
+- Call procedure format: 
+
+```mysql
+CALL Friedman({PrimaryKey_ID}, {Table1}, {Table2}, {Table3}, {Tabel1_Column}, {Tabel2_Column}, {Tabel3_Column});
+```
+
+- Sample code:
+
+```mysql
+CALL Friedman('UserNum', 'conditionA', 'conditionB', 'conditionC', 'Enjoyment', 'Enjoyment', 'Enjoyment');
+```
 
