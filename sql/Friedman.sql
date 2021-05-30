@@ -93,5 +93,7 @@ CREATE PROCEDURE `Friedman`(IN uid varchar(25), IN table1 varchar(25), IN table2
 
 		SELECT tValue2 AS T2;
 
+		DROP TEMPORARY TABLE TempTable;
+		DROP TABLE RankTable;
 	END//
 DELIMITER ;

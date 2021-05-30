@@ -17,6 +17,7 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		DECLARE totalRowNumber INT DEFAULT 1;
 		DECLARE negativeM FLOAT DEFAULT 0;
 		DECLARE positiveM FLOAT DEFAULT 0;
+		DECLARE rValue FLOAT DEFAULT 0;
 
 		DROP TEMPORARY TABLE IF EXISTS `TempTable`;
 		DROP TABLE IF EXISTS `RankTable`;
@@ -81,8 +82,14 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		FROM RankTable AS rt
 		WHERE rt.Difference > 0;
 
-		SELECT positiveM;
-		SELECT negativeM;
+		-- Choose the smaller number as R
+		IF positiveM > negativeM THEN
+			SET rValue = negativeM;
+		ELSEIF positiveM <= negativeM THEN
+			SET rValue = positiveM;
+		END IF;
+
+		SELECT rValue;
 		
 		DROP TEMPORARY TABLE TempTable;
 		DROP TABLE RankTable;
