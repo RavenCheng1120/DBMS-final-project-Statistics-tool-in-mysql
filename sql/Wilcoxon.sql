@@ -2,12 +2,11 @@
 -- Calculate difference between two values
 DELIMITER //
 CREATE FUNCTION Diff(param1 float, param2 float) RETURNS float DETERMINISTIC
-
-BEGIN
-DECLARE difference float;
-SET difference = param2 - param1;
-RETURN difference;
-END //
+	BEGIN
+	DECLARE difference float;
+	SET difference = param2 - param1;
+	RETURN difference;
+	END //
 
 -- Wilconxon algorithm
 DROP PROCEDURE IF EXISTS `Wilcoxon`//
@@ -18,6 +17,7 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		DECLARE negativeM FLOAT DEFAULT 0;
 		DECLARE positiveM FLOAT DEFAULT 0;
 		DECLARE rValue FLOAT DEFAULT 0;
+		DECLARE pColumnName varchar(20);
 
 		DROP TEMPORARY TABLE IF EXISTS `TempTable`;
 		DROP TABLE IF EXISTS `RankTable`;
@@ -50,6 +50,8 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		INTO totalRowNumber
 		FROM RankTable;
 
+		SELECT totalRowNumber;
+
 		-- Set default rank
 		SET @var:=0;
 		UPDATE RankTable SET Ranking=(@var:=@var+1) ORDER BY Absolute ASC;
@@ -63,14 +65,14 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		GROUP BY rt.Absolute
 		ORDER BY AbsoluteGroup;
 
-		SELECT * FROM TempTable;
+		-- SELECT * FROM TempTable;
 
 		-- Update the ranking
 		UPDATE RankTable AS rt, (SELECT * FROM TempTable) AS tempt
 		SET rt.Ranking = tempt.TiedRank
 		WHERE tempt.AbsoluteGroup = rt.Absolute;
 
-		SELECT * FROM RankTable ORDER BY Absolute ASC;
+		-- SELECT * FROM RankTable ORDER BY Absolute ASC;
 
 		-- Select ranking if its difference is negative (M-)
 		SELECT SUM(rt.Ranking) INTO negativeM
@@ -89,9 +91,17 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 			SET rValue = positiveM;
 		END IF;
 
-		SELECT rValue;
+		SELECT rValue; 
+
+		SET pColumnName = concat('N', '_', CAST(totalRowNumber AS CHAR(5)));
+		SET @prepS = CONCAT('SELECT Min(', pColumnName, ') AS p FROM Wilconxon_p_table WHERE R_Value > ', rValue);
+		PREPARE stmt FROM @prepS;
+		EXECUTE stmt;
 		
 		DROP TEMPORARY TABLE TempTable;
 		DROP TABLE RankTable;
 	END//
 DELIMITER ;
+
+/***** main *****/
+-- CALL Wilcoxon('UserNum', 'conditionB', 'conditionC', 'Immersion', 'Immersion');
