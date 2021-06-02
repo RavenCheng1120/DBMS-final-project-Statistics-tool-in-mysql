@@ -27,7 +27,9 @@ $\displaystyle SS_{error}=\Sigma_{i=1}^n\Sigma_{j=1}^k(X_{ij}-X_{i.})^2-SS_{mode
 3. 計算F
     -    $F=\dfrac{MS_{model}}{MS_{error}}$
 4. 計算p-value
-    -    查表 
+    -    查表 -> F( (n-1)(k-1) , (k-1) ) )
+    -    ex: 24人，3組 -> F(46,2)
+    -    因為預設3組，所以只做F( x , 2 )的表
 5. 回報p-value與顯著與否
 
 ### 補充
@@ -68,7 +70,9 @@ $C=\dfrac{nk(k+1)^2}{4}$
     -    $T_1=\dfrac{(k-1)\Sigma_{j=1}^{k}(\hat{R}_j-\frac{n(k+1)}{2})^2}{A-C}$
     -    $T_2=\dfrac{(n-1)T_1}{n(k-1)-T_1}$
 3. 計算p-value
-    -    查表 by F-distribution
+    -    查表 -> F( (k-1) , (n-1)(k-1) ) )
+    -    ex: 24人，3組 -> F(2,46)
+    -    因為預設3組，所以只做F( 2 , x )的表
 4. 回報p-value與顯著與否
 
 "The T1 approximation is sometimes poor, so the T2 approximation is typically preferred."
