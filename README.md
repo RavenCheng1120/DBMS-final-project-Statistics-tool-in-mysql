@@ -75,12 +75,13 @@ python3 src/FriedmanTableImport.py
 - Call procedure format: 
 
 ```mysql
-CALL Friedman({PrimaryKey_ID}, {Table1}, {Table2}, {Table3}, {Tabel1_Column}, {Tabel2_Column}, {Tabel3_Column});
+CALL Friedman({PrimaryKey_ID}, {Table1}, {Table2}, {Table3}, {Tabel1_Column}, {Tabel2_Column}, {Tabel3_Column}, @Friedman_p);
 ```
 
 - Sample code:
 
 ```mysql
-CALL Friedman('UserNum', 'conditionA', 'conditionB', 'conditionC', 'Enjoyment', 'Enjoyment', 'Enjoyment');
+CALL Friedman('UserNum', 'conditionA', 'conditionB', 'conditionC', 'Realism', 'Realism', 'Realism', @Friedman_p);
+SELECT TRUNCATE(@Friedman_p,3) AS p;
 ```
 
