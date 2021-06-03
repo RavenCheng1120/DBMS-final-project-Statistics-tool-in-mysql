@@ -1,6 +1,7 @@
 /***** Store Function and Store Procedure *****/
 -- Calculate difference between two values
 DELIMITER //
+DROP FUNCTION IF EXISTS `Diff`//
 CREATE FUNCTION Diff(param1 float, param2 float) RETURNS float DETERMINISTIC
 	BEGIN
 	DECLARE difference float;
@@ -10,7 +11,7 @@ CREATE FUNCTION Diff(param1 float, param2 float) RETURNS float DETERMINISTIC
 
 -- Wilconxon algorithm
 DROP PROCEDURE IF EXISTS `Wilcoxon`//
-CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2 varchar(25), IN columnName1 varchar(25), IN columnName2 varchar(25))
+CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2 varchar(25), IN columnName1 varchar(25), IN columnName2 varchar(25), OUT p FLOAT(4,3))
 	BEGIN
 		-- set up variables
 		DECLARE totalRowNumber INT DEFAULT 1;
@@ -42,6 +43,8 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		WHERE ABS(Difference) > 0;
 
 		DROP TEMPORARY TABLE TempTable;
+
+		-- SELECT * FROM RankTable;
 
 		ALTER TABLE RankTable ORDER BY Absolute ASC;
 
@@ -94,9 +97,15 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		SELECT rValue; 
 
 		SET pColumnName = concat('N', '_', CAST(totalRowNumber AS CHAR(5)));
-		SET @prepS = CONCAT('SELECT Min(', pColumnName, ') AS p FROM Wilconxon_p_table WHERE R_Value > ', rValue);
+		SET @result_p := 1.11;
+		SET @prepS = CONCAT('SELECT Min(', pColumnName, ') INTO @result_p FROM Wilconxon_p_table WHERE R_Value >= ', rValue);
 		PREPARE stmt FROM @prepS;
 		EXECUTE stmt;
+
+		SELECT @result_p INTO p;
+		-- SELECT Min(pColumnName)
+		-- FROM Wilconxon_p_table
+		-- WHERE R_Value > rValue;
 		
 		DROP TEMPORARY TABLE TempTable;
 		DROP TABLE RankTable;
@@ -104,4 +113,5 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 DELIMITER ;
 
 /***** main *****/
--- CALL Wilcoxon('UserNum', 'conditionB', 'conditionC', 'Immersion', 'Immersion');
+-- CALL Wilcoxon('UserNum', 'conditionA', 'conditionB', 'Enjoyment', 'Enjoyment', @Wilcoxon_p);
+-- SELECT @Wilcoxon_p;

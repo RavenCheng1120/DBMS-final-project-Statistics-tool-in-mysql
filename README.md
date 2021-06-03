@@ -44,7 +44,7 @@ python3 src/WilcoxonTableImport.py
 - Call procedure format: 
 
 ````mysql
-CALL Wilcoxon({PrimaryKey_ID}, {Table1}, {Table2}, {Tabel1_Column}, {Tabel2_Column});
+CALL Wilcoxon({PrimaryKey_ID}, {Table1}, {Table2}, {Tabel1_Column}, {Tabel2_Column},  @Wilcoxon_p);
 ````
 
 > The primary key must be the same in Table1 and Table2 for the two tables to join. 
@@ -52,7 +52,8 @@ CALL Wilcoxon({PrimaryKey_ID}, {Table1}, {Table2}, {Tabel1_Column}, {Tabel2_Colu
 - Sample code:
 
 ````mysql
-CALL Wilcoxon('UserNum', 'conditionA', 'conditionC', 'Enjoyment', 'Enjoyment');
+CALL Wilcoxon('UserNum', 'conditionA', 'conditionC', 'Enjoyment', 'Enjoyment', @Wilcoxon_p);
+SELECT @Wilcoxon_p;
 ````
 
 

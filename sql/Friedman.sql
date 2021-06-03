@@ -1,4 +1,5 @@
 DELIMITER //
+DROP FUNCTION IF EXISTS `RankRow`//
 CREATE FUNCTION RankRow(col1 float, col2 float, col3 float) RETURNS float DETERMINISTIC
 	BEGIN
 	DECLARE rankNumber float;
