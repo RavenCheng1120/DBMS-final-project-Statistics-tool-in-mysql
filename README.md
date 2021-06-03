@@ -25,15 +25,15 @@ SELECT @t, @p;
 
 - Build P-table:
 
-First, process the "wilcoxonTable.csv" to a new format. The following code will produce a new csv file called "NewWilcoxonTable.csv".
+  First, process the "wilcoxonTable.csv" to a new format. The following code will produce a new csv file called "NewWilcoxonTable.csv".
 
 ```python
 python3 src/processWilcoxonTable.py
 ```
 
-Then type this code in the console to import csv table into your database. The table data will be stored in a "Wilconxon_p_table". 
+​	Then type this code in the console to import csv table into your database. The table data will be stored in a "Wilconxon_p_table". 
 
-The R_value (primary key) is the Wilcoxon result R, and the column name is the N number (data amount). You can find a corresponding **p** value with a R_value and N.
+​	The R_value (primary key) is the Wilcoxon result R, and the column name is the N number (data amount). You can find a corresponding **p** value with a R_value and N.
 
 > Remember to change the user info in the python file.
 
@@ -61,6 +61,16 @@ SELECT @Wilcoxon_p;
 
 
 ## Friedman's ANOVA
+
+- Build P-table:
+
+  The table column name is the N number (data amount), and the primary key of each row is the p value.
+
+```pyth
+python3 src/FriedmanTableImport.py
+```
+
+
 
 - Call procedure format: 
 

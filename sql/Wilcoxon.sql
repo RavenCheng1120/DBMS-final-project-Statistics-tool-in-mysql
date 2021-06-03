@@ -53,7 +53,7 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		INTO totalRowNumber
 		FROM RankTable;
 
-		SELECT totalRowNumber;
+		-- SELECT totalRowNumber;
 
 		-- Set default rank
 		SET @var:=0;
@@ -94,7 +94,8 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 			SET rValue = positiveM;
 		END IF;
 
-		SELECT rValue; 
+
+		-- SELECT rValue; 
 
 		SET pColumnName = concat('N', '_', CAST(totalRowNumber AS CHAR(5)));
 		SET @result_p := 1.11;
@@ -103,15 +104,11 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		EXECUTE stmt;
 
 		SELECT @result_p INTO p;
-		-- SELECT Min(pColumnName)
-		-- FROM Wilconxon_p_table
-		-- WHERE R_Value > rValue;
 		
 		DROP TEMPORARY TABLE TempTable;
 		DROP TABLE RankTable;
 	END//
-DELIMITER ;
 
 /***** main *****/
--- CALL Wilcoxon('UserNum', 'conditionA', 'conditionB', 'Enjoyment', 'Enjoyment', @Wilcoxon_p);
--- SELECT @Wilcoxon_p;
+-- CALL Wilcoxon('UserNum', 'conditionA', 'conditionC', 'Immersion', 'Immersion', @Wilcoxon_p);
+-- SELECT TRUNCATE(@Wilcoxon_p,3) AS p;

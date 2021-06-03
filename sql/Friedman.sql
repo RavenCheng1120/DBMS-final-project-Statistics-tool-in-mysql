@@ -1,3 +1,4 @@
+/***** Store Function and Store Procedure *****/
 DELIMITER //
 DROP FUNCTION IF EXISTS `RankRow`//
 CREATE FUNCTION RankRow(col1 float, col2 float, col3 float) RETURNS float DETERMINISTIC
@@ -33,7 +34,7 @@ CREATE FUNCTION RankRow(col1 float, col2 float, col3 float) RETURNS float DETERM
 
 -- Friedman's ANOVA
 DROP PROCEDURE IF EXISTS `Friedman`//
-CREATE PROCEDURE `Friedman`(IN uid varchar(25), IN table1 varchar(25), IN table2 varchar(25), IN table3 varchar(25), IN columnName1 varchar(25), IN columnName2 varchar(25), IN columnName3 varchar(25))
+CREATE PROCEDURE `Friedman`(IN uid varchar(25), IN table1 varchar(25), IN table2 varchar(25), IN table3 varchar(25), IN columnName1 varchar(25), IN columnName2 varchar(25), IN columnName3 varchar(25), OUT p FLOAT(4,3))
 	BEGIN
 		DECLARE sumCol1 FLOAT DEFAULT 0;
 		DECLARE sumCol2 FLOAT DEFAULT 0;
@@ -67,7 +68,7 @@ CREATE PROCEDURE `Friedman`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		SELECT UserID, RankRow(column1, column2, column3) AS r1, RankRow(column2, column1, column3) AS r2, RankRow(column3, column2, column1) AS r3
 		FROM TempTable;
 
-		SELECT * FROM RankTable;
+		-- SELECT * FROM RankTable;
 
 		-- summed rank in each column
 		SELECT SUM(Ranking1), SUM(Ranking2), SUM(Ranking3)
@@ -92,9 +93,22 @@ CREATE PROCEDURE `Friedman`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		-- calculate T2 using T1
 		SET tValue2 = ((totalRowNumber-1)*tValue1) / (totalRowNumber*(3-1) - tValue1);
 
-		SELECT tValue2 AS T2;
+		-- SELECT tValue2 AS T2;
+
+		SET @pColumnName = concat('N', '_', CAST(totalRowNumber AS CHAR(5)));
+		SET @result_p := 1.11;
+		SET @prepS = CONCAT('SELECT Count(', @pColumnName, ')*0.001 INTO @result_p FROM Friedman_p_table WHERE ', @pColumnName, ' > ', tValue2,'');
+		PREPARE stmt FROM @prepS;
+		EXECUTE stmt;
+
+		SELECT @result_p INTO p;
 
 		DROP TEMPORARY TABLE TempTable;
 		DROP TABLE RankTable;
 	END//
 DELIMITER ;
+
+
+/***** main *****/
+-- CALL Friedman('UserNum', 'conditionA', 'conditionB', 'conditionC', 'Realism', 'Realism', 'Realism', @Friedman_p);
+-- SELECT TRUNCATE(@Friedman_p,3) AS p;
