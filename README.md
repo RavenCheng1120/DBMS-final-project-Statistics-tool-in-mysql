@@ -3,20 +3,30 @@
 ## Paired T-Test
 - Build T-Table:
 ```
-python3 src/build_t_table.py
+cd src/
+python3 buildTTable.py
 ```
-> You should set your db password in `src/build_t_table.py` first.
+> The output table will be in `TTable.csv`.
+
+- Import T-Table:
+```
+cd src/
+python3 TTableImport.py
+```
+> `TTable.csv` should be built first.
+
+> Remember to set your db usr & pwd in `TTableImport.py`.
 
 - Call procedure format: 
 ```sql
-CALL PairedTTest({PrimaryKey}, {Table1}, {Tabel1_Column}, {Table2}, {Tabel2_Column}, @t, @p);
+CALL PairedTTest({PrimaryKey}, {Table1}, {Table2}, {Tabel1_Column}, {Tabel2_Column}, @p);
 ```
 > The primary key must be the same in Table1 and Table2 for the two tables to join. 
 
 - Sample code:
 ```sql
-CALL PairedTTest('UserNum', 'normal', 'Pretest', 'normal', 'Midtest', @t, @p);
-SELECT @t, @p;
+CALL PairedTTest("UserNum", "normal", "normal", "pretest", "midtest", @p);
+SELECT ROUND(@p, 3) AS p;
 ```
 
 
@@ -58,7 +68,27 @@ CALL Wilcoxon('UserNum', 'conditionA', 'conditionC', 'Enjoyment', 'Enjoyment', @
 SELECT @Wilcoxon_p;
 ````
 
+## Repeated Measures ANOVA
+- Import P-Table:
+```
+cd src/
+python3 RepeatTableImport.py
+```
+> `RepeatANOVAtable.csv` should be built first.
 
+> Remember to set your db usr & pwd in `RepeatTableImport.py`.
+
+- Call procedure format: 
+```sql
+CALL RepeatedMeasuresANOVA({PrimaryKey}, {Table1}, {Table2}, {Table3}, {Tabel1_Column}, {Tabel2_Column}, {Tabel3_Column}, @p);
+```
+> The primary key must be the same in Table1, Table2 and Table3 for the tables to join. 
+
+- Sample code:
+```sql
+CALL RepeatedMeasuresANOVA("UserNum", "normal", "normal", "normal", "pretest", "midtest", "posttest", @p);
+SELECT ROUND(@p, 3) AS p;
+```
 
 ## Friedman's ANOVA
 
