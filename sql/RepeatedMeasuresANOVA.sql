@@ -3,8 +3,13 @@ DROP PROCEDURE IF EXISTS RepeatedMeasuresANOVA;
 DELIMITER $$
 
 CREATE PROCEDURE RepeatedMeasuresANOVA(
-    IN tableName varchar(64),
     IN keyName varchar(64),
+    IN table1 varchar(64),
+    IN table2 varchar(64),
+    IN table3 varchar(64),
+    IN column1 varchar(64),
+    IN column2 varchar(64),
+    IN column3 varchar(64),
     OUT p float
 )
 BEGIN
@@ -13,11 +18,13 @@ BEGIN
 
     DECLARE column_names CURSOR FOR
         SELECT
-            column_name
-        FROM
-            information_schema.columns
-        WHERE
-            table_name = tableName
+            column1 AS column_name
+        UNION ALL
+        SELECT
+            column2 AS column_name
+        UNION ALL
+        SELECT
+            column3 AS column_name
     ;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
@@ -26,13 +33,23 @@ BEGIN
         CREATE TABLE
             TempTable
         SELECT
-            t.", keyName, " AS _key,
-            t.*
+            ", keyName, " AS _key,
+            t1.", column1, ",
+            t2.", column2, ",
+            t3.", column3, "
         FROM
-            ", tableName, " AS t
+            ", table1, " AS t1
+        JOIN
+            ", table2, " AS t2
+        USING
+            ( ", keyName, " )
+        JOIN
+            ", table3, " AS t3
+        USING
+            ( ", keyName, " )
     ");
     PREPARE statement1 FROM @statement1;
-	EXECUTE statement1;
+    EXECUTE statement1;
     DEALLOCATE PREPARE statement1;
 
     DROP TABLE IF EXISTS ColumnName;
@@ -42,7 +59,7 @@ BEGIN
     FROM
         information_schema.columns
     WHERE
-        table_name = tableName
+        table_name = "TempTable"
     ;
     
     OPEN column_names;
@@ -72,9 +89,11 @@ BEGIN
             TempTable
         CROSS JOIN
             ColumnName
+        WHERE
+            column_name != '_key'
     ");
     PREPARE statement1 FROM @statement1;
-	EXECUTE statement1;
+    EXECUTE statement1;
     DEALLOCATE PREPARE statement1;
 
     SET @F = "";
@@ -179,7 +198,7 @@ BEGIN
         LIMIT 1
     ");
     PREPARE statement1 FROM @statement1;
-	EXECUTE statement1;
+    EXECUTE statement1;
     DEALLOCATE PREPARE statement1;
 
     SELECT @p INTO p;
@@ -191,5 +210,5 @@ END$$
 
 DELIMITER ;
 
-CALL RepeatedMeasuresANOVA("normal", "UserNum", @p);
-SELECT ROUND(@p, 3) AS p;
+-- CALL RepeatedMeasuresANOVA("UserNum", "normal", "normal", "normal", "pretest", "midtest", "posttest", @p);
+-- SELECT ROUND(@p, 3) AS p;

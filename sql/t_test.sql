@@ -3,12 +3,11 @@ DROP PROCEDURE IF EXISTS PairedTTest;
 DELIMITER $$
 
 CREATE PROCEDURE PairedTTest(
-    IN uidColumnName varchar(25),
-    IN table1 varchar(25),
-    IN columnName1 varchar(25),
-    IN table2 varchar(25),
-    IN columnName2 varchar(25),
-    OUT t float,
+    IN uidColumnName varchar(64),
+    IN table1 varchar(64),
+    IN table2 varchar(64),
+    IN columnName1 varchar(64),
+    IN columnName2 varchar(64),
     OUT p float
 )
 BEGIN
@@ -66,11 +65,11 @@ BEGIN
         LIMIT 1
     )
     SELECT
-        t.t,
+        -- t.t,
         -- df.df,
         tt.p
     INTO
-        t, p
+        p
     FROM
         t, df
     JOIN
@@ -86,3 +85,6 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- CALL PairedTTest("UserNum", "normal", "normal", "pretest", "midtest", @p);
+-- SELECT ROUND(@p, 3) AS p;
