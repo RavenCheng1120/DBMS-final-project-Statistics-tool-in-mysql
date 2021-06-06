@@ -5,8 +5,7 @@ DELIMITER $$
 CREATE PROCEDURE RepeatedMeasuresANOVA(
     IN tableName varchar(64),
     IN keyName varchar(64),
-    OUT F float
-    -- OUT p float
+    OUT p float
 )
 BEGIN
     DECLARE col_name varchar(64);
@@ -78,8 +77,8 @@ BEGIN
 	EXECUTE statement1;
     DEALLOCATE PREPARE statement1;
 
-    -- SELECT * FROM TransposeTempTable;
-
+    SET @F = "";
+    SET @n = "";
     WITH
     n AS (
         SELECT
@@ -158,14 +157,39 @@ BEGIN
             ss_error, k, n
     )
     SELECT
-        ms_model / ms_error AS F
+        ms_model / ms_error AS F,
+        n
+    INTO
+        @F,
+        @n
     FROM
-        ms_model, ms_error;
+        ms_model, ms_error, n;
+
+    SET @statement1 = CONCAT("
+        SELECT
+            P_Value
+        INTO
+            @p
+        FROM
+            Repeated_p_table
+        WHERE
+            N_", @n - 1 , " <= ", @F, "
+        ORDER BY
+            N_", @n - 1, " DESC
+        LIMIT 1
+    ");
+    PREPARE statement1 FROM @statement1;
+	EXECUTE statement1;
+    DEALLOCATE PREPARE statement1;
+
+    SELECT @p INTO p;
 
     DROP TABLE TempTable;
-
+    DROP TABLE ColumnName;
+    DROP TABLE TransposeTempTable;
 END$$
 
 DELIMITER ;
 
-CALL RepeatedMeasuresANOVA("normal", "UserNum", @F);
+CALL RepeatedMeasuresANOVA("normal", "UserNum", @p);
+SELECT ROUND(@p, 3) AS p;
