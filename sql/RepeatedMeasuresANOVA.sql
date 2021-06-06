@@ -194,7 +194,7 @@ BEGIN
         WHERE
             N_", @n - 1 , " <= ", @F, "
         ORDER BY
-            N_", @n - 1, " DESC
+            P_Value ASC
         LIMIT 1
     ");
     PREPARE statement1 FROM @statement1;

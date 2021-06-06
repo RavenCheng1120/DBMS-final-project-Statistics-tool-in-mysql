@@ -1,11 +1,8 @@
-from mysql.connector import MySQLConnection
+import csv
+
 import numpy as np
 from scipy import stats
 from tqdm import tqdm
-
-
-USR = "root"
-PWD = ""
 
 
 if __name__ == "__main__":
@@ -39,29 +36,8 @@ if __name__ == "__main__":
                     t_table.append({"df": df, "t": round(t - 0.01, 2), "p": p})
                 else:
                     t_table.append({"df": df, "t": round(t - 0.001, 3), "p": p})
-
-    db = MySQLConnection(user=USR, password=PWD, database="statisticsdb")
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("""
-        CREATE TABLE T_Table (
-            df int NOT NULL,
-            t float NOT NULL,
-            p float NOT NULL,
-            PRIMARY KEY (df, t)
-        )
-    """)
-
-    for row in t_table:
-        cursor.execute(f"""
-            INSERT INTO T_Table
-            VALUES
-            (
-                {row["df"]},
-                {row["t"]},
-                {row["p"]}
-            )
-        """)
-    db.commit()
-
-    cursor.close()
-    db.close()
+    
+    with open("TTable.csv", "w") as file:
+        writer = csv.DictWriter(file, fieldnames=["df", "t", "p"])
+        writer.writeheader()
+        writer.writerows(t_table)

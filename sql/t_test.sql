@@ -76,8 +76,10 @@ BEGIN
         T_Table AS tt
     USING
         ( df )
+    WHERE
+        tt.t <= t.t
     ORDER BY
-        ABS(t.t - tt.t) ASC
+        tt.p ASC
     LIMIT 1;
 
     DROP TABLE TempTable;
