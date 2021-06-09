@@ -68,8 +68,6 @@ CREATE PROCEDURE `Friedman`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		SELECT UserID, RankRow(column1, column2, column3) AS r1, RankRow(column2, column1, column3) AS r2, RankRow(column3, column2, column1) AS r3
 		FROM TempTable;
 
-		-- SELECT * FROM RankTable;
-
 		-- summed rank in each column
 		SELECT SUM(Ranking1), SUM(Ranking2), SUM(Ranking3)
 		INTO sumCol1, sumCol2, sumCol3

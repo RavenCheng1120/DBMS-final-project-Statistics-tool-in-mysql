@@ -44,16 +44,10 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 
 		DROP TEMPORARY TABLE TempTable;
 
-		-- SELECT * FROM RankTable;
-
-		ALTER TABLE RankTable ORDER BY Absolute ASC;
-
 		--  count rows
 		SELECT COUNT(*)
 		INTO totalRowNumber
 		FROM RankTable;
-
-		-- SELECT totalRowNumber;
 
 		-- Set default rank
 		SET @var:=0;
@@ -68,14 +62,10 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		GROUP BY rt.Absolute
 		ORDER BY AbsoluteGroup;
 
-		-- SELECT * FROM TempTable;
-
 		-- Update the ranking
 		UPDATE RankTable AS rt, (SELECT * FROM TempTable) AS tempt
 		SET rt.Ranking = tempt.TiedRank
 		WHERE tempt.AbsoluteGroup = rt.Absolute;
-
-		-- SELECT * FROM RankTable ORDER BY Absolute ASC;
 
 		-- Select ranking if its difference is negative (M-)
 		SELECT SUM(rt.Ranking) INTO negativeM
@@ -96,7 +86,6 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 
 
 		-- SELECT rValue; 
-
 		SET pColumnName = concat('N', '_', CAST(totalRowNumber AS CHAR(5)));
 		SET @result_p := 1.11;
 		SET @prepS = CONCAT('SELECT Min(', pColumnName, ') INTO @result_p FROM Wilconxon_p_table WHERE R_Value >= ', rValue);
@@ -108,6 +97,7 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 		DROP TEMPORARY TABLE TempTable;
 		DROP TABLE RankTable;
 	END//
+
 
 /***** main *****/
 -- CALL Wilcoxon('UserNum', 'conditionA', 'conditionC', 'Immersion', 'Immersion', @Wilcoxon_p);
