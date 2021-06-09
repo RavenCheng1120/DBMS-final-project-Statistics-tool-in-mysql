@@ -66,7 +66,7 @@ BEGIN
 	# Set result values
 	IF p_normal > 0.005 AND count < 20 THEN
 		SET NormalResult = "True";
-		SET comment = "Suggest treat as non-normal";
+		SET comment = "Suggest treat as non-normal because of small sample size";
 	ELSEIF p_normal > 0.005 THEN
 		SET NormalResult = "True";
 	ELSE
