@@ -6,6 +6,7 @@ CREATE PROCEDURE Normal(IN tableName varchar(25), IN columnName varchar(25))
 BEGIN
 	
 	# Declare variable
+	DECLARE count int DEFAULT 0;
 	DECLARE mean FLOAT DEFAULT 0;
 	DECLARE g1 FLOAT DEFAULT 0;
 	DECLARE g2 FLOAT DEFAULT 0;
@@ -15,17 +16,20 @@ BEGIN
 	DECLARE mu2 FLOAT DEFAULT 0;
 	DECLARE sigma1 FLOAT DEFAULT 0;
 	DECLARE sigma2 FLOAT DEFAULT 0;
-	DECLARE k FLOAT DEFAULT 0;
+	DECLARE k_normal FLOAT DEFAULT 0;
+	DECLARE p_normal FLOAT DEFAULT 0;
+	DECLARE NormalResult varchar(10) DEFAULT "";
+	DECLARE comment varchar(100) DEFAULT "";
 
 	# Create table to call
 	DROP TEMPORARY TABLE IF EXISTS ValueTable;
 	SET @statement = CONCAT('CREATE TEMPORARY TABLE ValueTable SELECT ', columnName, ' AS value FROM ', tableName);
 	PREPARE statement FROM @statement;
 	EXECUTE statement;
-    DEALLOCATE PREPARE statement;
+	DEALLOCATE PREPARE statement;
 
-    # Calculate mean
-	SELECT AVG(value) INTO mean FROM ValueTable;
+	# Calculate count, mean
+	SELECT COUNT(*), AVG(value) INTO count, mean FROM ValueTable;
 
 	# Add 4 column to table
 	ALTER TABLE ValueTable
@@ -36,9 +40,9 @@ BEGIN
 	# Calculate each row's number for g1 & g2
 	UPDATE ValueTable 
 	SET 
-	    g1Up = POWER(value - mean, 3),
-	    Down = POWER(value - mean, 2),
-	    g2Up = POWER(value - mean, 4);
+		g1Up = POWER(value - mean, 3),
+		Down = POWER(value - mean, 2),
+		g2Up = POWER(value - mean, 4);
 
 	# Calculate g1 & g2
 	SELECT SUM(g1Up) / (POWER(COUNT(*), 3/2) * POWER(SUM(Down), 3/2)) INTO g1 FROM ValueTable;
@@ -54,8 +58,33 @@ BEGIN
 	SET z2 = (g2 - mu2) / sigma2;
 
 	# Calculate k
-	SET k = POWER(z1, 2) + POWER(z2, 2);
-	SELECT k;
+	SET k_normal = POWER(z1, 2) + POWER(z2, 2);
+
+	# Find corresponding p of k
+	SELECT COUNT(*) / 1000 INTO p_normal FROM ChiSquareTable WHERE k >= k_normal;
+
+	# Set result values
+	IF p_normal > 0.005 AND count < 20 THEN
+		SET NormalResult = "True";
+		SET comment = "Suggest treat as non-normal";
+	ELSEIF p_normal > 0.005 THEN
+		SET NormalResult = "True";
+	ELSE
+		SET NormalResult = "False";
+	END IF;
+
+	# Create reault table
+	DROP TABLE IF EXISTS TestNormalResult;
+	CREATE TABLE TestNormalResult (
+		Normality varchar(10) NOT NULL,
+		p float NOT NULL PRIMARY KEY,
+		Comment varchar(100)
+	);
+	INSERT INTO TestNormalResult
+	VALUES
+	(NormalResult, p_normal, comment);
+
+	SELECT * FROM TestNormalResult;
 
 END //
 
