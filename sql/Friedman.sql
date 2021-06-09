@@ -95,7 +95,7 @@ CREATE PROCEDURE `Friedman`(IN uid varchar(25), IN table1 varchar(25), IN table2
 
 		SET @pColumnName = concat('N', '_', CAST(totalRowNumber AS CHAR(5)));
 		SET @result_p := 1.11;
-		SET @prepS = CONCAT('SELECT (Count(', @pColumnName, ')-1)*0.001 INTO @result_p FROM Friedman_p_table WHERE ', @pColumnName, ' > ', tValue2,'');
+		SET @prepS = CONCAT('SELECT Count(', @pColumnName, ')*0.001 INTO @result_p FROM Friedman_p_table WHERE ', @pColumnName, ' > ', tValue2,'');
 		PREPARE stmt FROM @prepS;
 		EXECUTE stmt;
 
