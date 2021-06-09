@@ -109,4 +109,4 @@ DELIMITER ;
 
 /***** main *****/
 -- CALL Friedman('UserNum', 'conditionA', 'conditionB', 'conditionC', 'Realism', 'Realism', 'Realism', @Friedman_p);
--- SELECT TRUNCATE(@Friedman_p,3) AS p;
+-- SELECT ROUND(@Friedman_p,3) AS p;

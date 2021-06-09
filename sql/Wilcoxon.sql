@@ -101,4 +101,4 @@ CREATE PROCEDURE `Wilcoxon`(IN uid varchar(25), IN table1 varchar(25), IN table2
 
 /***** main *****/
 -- CALL Wilcoxon('UserNum', 'conditionA', 'conditionC', 'Immersion', 'Immersion', @Wilcoxon_p);
--- SELECT TRUNCATE(@Wilcoxon_p,3) AS p;
+-- SELECT ROUND(@Wilcoxon_p,3) AS p;
