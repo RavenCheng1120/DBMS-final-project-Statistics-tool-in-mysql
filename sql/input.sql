@@ -1,5 +1,5 @@
-CREATE DATABASE StatisticsDB;
-USE StatisticsDB;
+-- CREATE DATABASE StatisticsDB;
+-- USE StatisticsDB;
 
 CREATE TABLE normal (
     UserNum int NOT NULL,

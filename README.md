@@ -1,6 +1,37 @@
 # DBMS Final Project: Statistics tool in MySQL
 
+## How to use
+
+**Step1:** `mysql> CREATE DATABASE yourDatabaseName;` and `mysql> USE yourDatabaseName;`
+
+**Step2:** Import all your study data (ex: input.sql) in MySQL
+
+**Step3:** In console, run shell script StatisticsTool.sh in the src folder
+
+```bash
+$ sh StatisticsTool.sh {password} {yourDatabaseName} {user} {host}
+```
+
+> To 組員: parameter 都有 default 值，default 密碼是 abc、DatabaseName 是 statisticsdb、user 是 root、host 是 localhost。可以自由選擇要輸入幾個參數or不輸入。括號不用輸入。
+
+Example: 
+
+```bash
+sh StatisticsTool.sh IAmPWD myDB
+```
+
+**Step4:** In MySQL Shell, run the StatisticsSQL.sql in the sql folder
+
+```mysql
+> source /YourPath/StatisticsSQL.sql
+```
+
+Now you can call the test procedures :)
+
+
+
 ## Paired T-Test
+
 - Build T-Table:
 ```
 cd src/
