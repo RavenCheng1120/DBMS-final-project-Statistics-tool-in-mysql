@@ -18,13 +18,17 @@ BEGIN
 	);
 
 	IF withinGroup IS TRUE AND numercial IS TRUE AND parametric IS TRUE AND groupNum < 3 THEN
-		INSERT INTO RecommandTable VALUES ("Paired T-test", "CALL PairedTTest({PrimaryKey}, {Table1}, {Tabel1_Column}, {Table2}, {Tabel2_Column}, @t, @p);");
+		INSERT INTO RecommandTable VALUES ("Paired T-test", 
+			"CALL PairedTTest({PrimaryKey}, {Table1}, {Table2}, {Tabel1_Column}, {Tabel2_Column}, @p);");
 	ELSEIF withinGroup IS TRUE AND numercial IS TRUE AND parametric IS TRUE THEN
-		INSERT INTO RecommandTable VALUES ("Repeated measures ANOVA", "CALL RepeatedMeasuresANOVA({PrimaryKey}, {Table1}, {Table2}, {Table3}, {Tabel1_Column}, {Tabel2_Column}, {Tabel3_Column}, @p);");
+		INSERT INTO RecommandTable VALUES ("Repeated measures ANOVA", 
+			"CALL RepeatedMeasuresANOVA({PrimaryKey}, {Table1}, {Table2}, {Table3}, {Tabel1_Column}, {Tabel2_Column}, {Tabel3_Column}, @p);");
 	ELSEIF withinGroup IS TRUE AND numercial IS TRUE AND groupNum < 3 THEN
-		INSERT INTO RecommandTable VALUES ("Wilcoxon's matched pairs signed rank test", "CALL Wilcoxon({PrimaryKey_ID}, {Table1}, {Table2}, {Tabel1_Column}, {Tabel2_Column});");
+		INSERT INTO RecommandTable VALUES ("Wilcoxon's matched pairs signed rank test", 
+			"CALL Wilcoxon({PrimaryKey_ID}, {Table1}, {Table2}, {Tabel1_Column}, {Tabel2_Column},  @Wilcoxon_p);");
 	ELSEIF withinGroup IS TRUE AND numercial IS TRUE THEN
-		INSERT INTO RecommandTable VALUES ("Friedman's ANOVA", "CALL Friedman({PrimaryKey_ID}, {Table1}, {Table2}, {Table3}, {Tabel1_Column}, {Tabel2_Column}, {Tabel3_Column});");
+		INSERT INTO RecommandTable VALUES ("Friedman's ANOVA", 
+			"CALL Friedman({PrimaryKey_ID}, {Table1}, {Table2}, {Table3}, {Tabel1_Column}, {Tabel2_Column}, {Tabel3_Column}, @Friedman_p);");
 	ELSEIF withinGroup IS TRUE AND groupNum < 3 THEN
 		INSERT INTO RecommandTable VALUES ("McNemar's test", "");
 		INSERT INTO RecommandTable VALUES ("McNemar's test exact variants", "");
